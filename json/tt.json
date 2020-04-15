@@ -1,0 +1,43 @@
+{
+  "book": "Thirumarai Thirupadalgal",
+  "1": {
+    "number": 1,
+    "name": "பகலும் ராவும் கர்த்தருடையது",
+    "scale": "D",
+    "mode": "maj",
+    "rhythm": "4/4",
+    "misc": ""
+  },
+  "2": {
+    "number": 2,
+    "name": "வேத நூல் தாரும்",
+    "scale": "C",
+    "mode": "maj",
+    "rhythm": "2/4",
+    "misc": ""
+  },
+  "3": {
+    "number": 3,
+    "name": "காது குளிர பாடுங்கள்",
+    "scale": "G",
+    "mode": "maj",
+    "rhythm": "3/8",
+    "misc": ""
+  },
+  "4": {
+    "number": 4,
+    "name": "பாதைக்குத் தீபமாமே",
+    "scale": "E",
+    "mode": "maj",
+    "rhythm": "3/4",
+    "misc": ""
+  },
+  "5": {
+    "number": 5,
+    "name": "தோத்திர பாதிரனே",
+    "scale": "F",
+    "mode": "maj",
+    "rhythm": "4/4",
+    "misc": ""
+  }
+}
