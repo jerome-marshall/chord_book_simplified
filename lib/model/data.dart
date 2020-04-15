@@ -1,157 +1,180 @@
-import 'package:chordbooksimplified/model/scale_major.dart';
-import 'package:chordbooksimplified/model/scale_minor.dart';
+import 'dart:convert';
+
+import 'package:chordbooksimplified/model/scale.dart';
 import 'package:chordbooksimplified/model/song.dart';
+import 'package:flutter/services.dart';
 
 class Data {
   static String dim = String.fromCharCode(119212);
   static String sharp = String.fromCharCode(9839);
   static String flat = String.fromCharCode(9837);
 
+  Map _sozSongBook;
+
   Map _minorScale = {
-    'C': ScaleMinor(
+    'C': Scale(
         i: 'Cm',
         ii: 'D$dim',
         iii: 'E$flat',
         iv: 'Fm',
         v: 'Gm',
         vi: 'A$flat',
-        vii: 'B$flat'),
-    'D': ScaleMinor(
+        vii: 'B$flat',
+        mode: 'm'),
+    'D': Scale(
         i: 'Dm',
         ii: 'E$dim',
         iii: 'F',
         iv: 'Gm',
         v: 'Am',
         vi: 'B$flat',
-        vii: 'C'),
-    'E': ScaleMinor(
+        vii: 'C',
+        mode: 'm'),
+    'E': Scale(
         i: 'Em',
         ii: 'F$sharp$dim',
         iii: 'G',
         iv: 'Am',
         v: 'Bm',
         vi: 'C',
-        vii: 'D'),
-    'F': ScaleMinor(
+        vii: 'D',
+        mode: 'm'),
+    'F': Scale(
         i: 'Fm',
         ii: 'G$dim',
         iii: 'A$flat',
         iv: 'B$flat' 'm',
         v: 'Cm',
         vi: 'D$flat',
-        vii: 'E$flat'),
-    'G': ScaleMinor(
+        vii: 'E$flat',
+        mode: 'm'),
+    'G': Scale(
         i: 'Gm',
         ii: 'A$dim',
         iii: 'B$flat',
         iv: 'Cm',
         v: 'Dm',
         vi: 'E$flat',
-        vii: 'F'),
-    'A': ScaleMinor(
-        i: 'Am', ii: 'B$dim', iii: 'C', iv: 'Dm', v: 'Em', vi: 'F', vii: 'G'),
-    'B': ScaleMinor(
+        vii: 'F',
+        mode: 'm'),
+    'A': Scale(
+        i: 'Am',
+        ii: 'B$dim',
+        iii: 'C',
+        iv: 'Dm',
+        v: 'Em',
+        vi: 'F',
+        vii: 'G',
+        mode: 'm'),
+    'B': Scale(
         i: 'Bm',
         ii: 'C$sharp$dim',
         iii: 'D',
         iv: 'Em',
         v: 'F$sharp' 'm',
         vi: 'G',
-        vii: 'A'),
+        vii: 'A',
+        mode: 'm'),
   };
 
   Map _majorScale = {
-    'C': ScaleMajor(
-        i: 'C', ii: 'Dm', iii: 'Em', iv: 'F', v: 'G', vi: 'Am', vii: 'B$dim'),
-    'D': ScaleMajor(
+    'C': Scale(
+        i: 'C',
+        ii: 'Dm',
+        iii: 'Em',
+        iv: 'F',
+        v: 'G',
+        vi: 'Am',
+        vii: 'B$dim',
+        mode: 'maj'),
+    'D': Scale(
         i: 'D',
         ii: 'Em',
         iii: 'F$sharp' 'm',
         iv: 'G',
         v: 'A',
         vi: 'Bm',
-        vii: 'C$sharp$dim'),
-    'E': ScaleMajor(
+        vii: 'C$sharp$dim',
+        mode: 'maj'),
+    'E': Scale(
         i: 'E',
         ii: 'F$sharp' 'm',
         iii: 'G$sharp' 'm',
         iv: 'A',
         v: 'B',
         vi: 'C$sharp' 'm',
-        vii: 'D$sharp$dim'),
-    'F': ScaleMajor(
+        vii: 'D$sharp$dim',
+        mode: 'm'),
+    'F': Scale(
         i: 'F',
         ii: 'Gm',
         iii: 'Am',
         iv: 'B$flat',
         v: 'C',
         vi: 'Dm',
-        vii: 'E$dim'),
-    'G': ScaleMajor(
+        vii: 'E$dim',
+        mode: 'maj'),
+    'G': Scale(
         i: 'G',
         ii: 'Am',
         iii: 'Bm',
         iv: 'C',
         v: 'D',
         vi: 'Em',
-        vii: 'F$sharp$dim'),
-    'A': ScaleMajor(
+        vii: 'F$sharp$dim',
+        mode: 'm'),
+    'A': Scale(
         i: 'A',
         ii: 'Bm',
         iii: 'C$sharp' 'm',
         iv: 'D',
         v: 'E',
         vi: 'F$sharp' 'm',
-        vii: 'G$sharp$dim'),
-    'B': ScaleMajor(
+        vii: 'G$sharp$dim',
+        mode: 'maj'),
+    'B': Scale(
         i: 'B',
         ii: 'C$sharp' 'm',
         iii: 'D$sharp' 'm',
         iv: 'E',
         v: 'F$sharp',
         vi: 'G$sharp' 'm',
-        vii: 'A$sharp$dim'),
+        vii: 'A$sharp$dim',
+        mode: 'maj'),
   };
 
-  Map songs = {
-    '1': Song(
-        book: 'Songs of Zion',
-        number: '1',
-        name: 'Holy Holy Holy',
-        scale: 'D',
-        rhythm: '4/4',
-        misc: 'non'),
-    '2': Song(
-        book: 'Songs of Zion',
-        number: '2',
-        name: 'He leadeth me',
-        scale: 'C',
-        rhythm: '2/4',
-        misc: 'non'),
-    '3': Song(
-        book: 'Songs of Zion',
-        number: '3',
-        name: 'Amazing Grace',
-        scale: 'G',
-        rhythm: '3/8',
-        misc: 'non'),
-    '4': Song(
-        book: 'Songs of Zion',
-        number: '4',
-        name: 'Blessed Assurance',
-        scale: 'E',
-        rhythm: '3/4',
-        misc: 'non'),
-    '5': Song(
-        book: 'Songs of Zion',
-        number: '5',
-        name: 'Trust in You',
-        scale: 'A',
-        rhythm: '2/4',
-        misc: 'non'),
-  };
+  Data();
+
+  void setSozSongBook(Map soz) {
+    this._sozSongBook = soz;
+  }
+
+  Map getSozSongBook() {
+    return this._sozSongBook;
+  }
+
+  Song getSong(String number) {
+    return Song.fromMap(_sozSongBook[number]);
+  }
+
+
+  Scale getScale(String scale, String mode) {
+    return mode == 'maj' ? _majorScale[scale] : _minorScale[scale];
+  }
+
+  Future<String> _loadSozJson() async {
+    return await rootBundle.loadString('json/soz.json');
+  }
+
+  Future loadSoz() async {
+    String jsonCrossword = await _loadSozJson();
+    Map decoded = jsonDecode(jsonCrossword);
+    _sozSongBook = decoded;
+  }
+
+  Future<Map> getSongBook(int n) async {
+    await loadSoz();
+    return this._sozSongBook;
+  }
 }
 
-//𝆬	Combining Harmonic	U + 1D1AC;	&#119212;
-//♯	Sharp Sign	U + 266F;	&#9839;
-//♭	Flat Sign	U + 266D;	&#9837;
