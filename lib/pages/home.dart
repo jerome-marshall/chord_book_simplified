@@ -1,14 +1,13 @@
-import 'dart:convert';
-import 'dart:async' show Future;
-
-import 'package:chordbooksimplified/model/data.dart';
-import 'package:chordbooksimplified/model/scale.dart';
-import 'package:chordbooksimplified/model/song.dart';
 import 'package:chordbooksimplified/size_config.dart';
+import 'package:chordbooksimplified/widgets/transpose_dialog.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_layout_grid/flutter_layout_grid.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -16,27 +15,26 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Data data;
-  Map bundle;
+  final textController = TextEditingController();
 
   var neumorphicStyleProject = NeumorphicStyle(
-    color: Colors.grey[200],
+    color: Hexcolor('#E1E5EC'),
+    depth: 4,
+    intensity: 0.8,
+  );
+  var neumorphicStyleProjectBlue = NeumorphicStyle(
+    color: Hexcolor('#B8C6FF'),
     depth: 4,
     intensity: 0.8,
   );
   var neumorphicStyleDepth = NeumorphicStyle(
-    color: Colors.grey[200],
+    color: Hexcolor('#E1E5EC'),
     depth: -4,
     intensity: 0.8,
   );
 
-  final textController = TextEditingController();
-
-  @override
-  void dispose() {
-    textController.dispose();
-    super.dispose();
-  }
+  var scaleRhythmGroup = AutoSizeGroup();
+  var scaleDegGroup = AutoSizeGroup();
 
   @override
   Widget build(BuildContext context) {
@@ -44,192 +42,227 @@ class _HomeState extends State<Home> {
     double width = SizeConfig.safeBlockHorizontal;
     double height = SizeConfig.safeBlockVertical;
 
-    bundle = ModalRoute
-        .of(context)
-        .settings
-        .arguments;
-    data = bundle['data'];
-
-    int songNo = textController.text == '' ? 1 : int.parse(textController.text);
-    Song song = data.getSong(songNo.toString());
-    Scale scale = data.getScale(song.scale, song.mode);
-
-
     return SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.grey[200],
-          resizeToAvoidBottomInset: false,
-          body: Container(
-            child: Column(
+      child: Scaffold(
+        backgroundColor: Hexcolor('#E1E5EC'),
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: <Widget>[
+            // Song Book
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Flexible(
+                Flexible(
+                  child: Container(
+                    height: height * 10,
+                    child: NeumorphicButton(
+                      margin: EdgeInsets.fromLTRB(
+                          height * 2, height * 2, height * 2, 0),
+                      padding: EdgeInsets.all(height * 2),
+                      boxShape: NeumorphicBoxShape.roundRect(
+                          borderRadius: BorderRadius.circular(12)),
+                      style: neumorphicStyleProjectBlue,
+                      onClick: () {},
+                      child: AutoSizeText(
+                        "Songs of Zion",
+                        style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: height * 4,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.5),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: height * 2),
+
+            // Song number and name
+            Container(
+              height: height * 12.5,
+              padding:
+                  EdgeInsets.fromLTRB(height * 2, height * 2, height * 2, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  // Song Number
+                  Expanded(
+                    flex: 3,
+                    child: Neumorphic(
+                      boxShape: NeumorphicBoxShape.roundRect(
+                          borderRadius: BorderRadius.circular(12)),
+                      style: neumorphicStyleProjectBlue,
+                      child: TextField(
+                        controller: textController,
+                        inputFormatters: [LengthLimitingTextInputFormatter(3)],
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(height * 2),
+                          hintText: '......',
+                          border: InputBorder.none,
+                        ),
+                        style: TextStyle(
+                            fontSize: height * 5,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.w300,
+                            letterSpacing: 2),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(width: width * 6),
+
+                  // Song Name
+                  Expanded(
+                    flex: 8,
+                    child: Neumorphic(
+                      boxShape: NeumorphicBoxShape.roundRect(
+                          borderRadius: BorderRadius.circular(12)),
+                      padding: EdgeInsets.all(height),
+                      style: neumorphicStyleProject,
                       child: Container(
-                        height: height * 10,
-                        width: width * 90,
-                        child: Neumorphic(
-                          margin: EdgeInsets.fromLTRB(
-                              height * 2, height * 2, height * 2, 0),
-                          padding: EdgeInsets.all(height * 2),
-                          boxShape: NeumorphicBoxShape.roundRect(
-                              borderRadius: BorderRadius.circular(12)),
-                          style: neumorphicStyleProject,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Image.asset(
-                                'assets/song_book.png',
-                              ),
-                              SizedBox(
-                                width: width * 4,
-                              ),
-                              Flexible(
-                                child: Text(
-                                  "Songs of Zion",
-                                  style: TextStyle(
-                                      color: Colors.grey[700],
-                                      fontSize: height * 3.5,
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 1.5),
-                                ),
-                              ),
-                            ],
+                        child: Center(
+                          child: AutoSizeText(
+//                                song.name,
+                            "God will make a way",
+                            style: TextStyle(
+                                fontSize: height * 3.5,
+                                color: Colors.grey[700],
+                                fontWeight: FontWeight.w300,
+                                fontFamily: 'Catamaran',
+                                letterSpacing: 1.5),
+                            maxLines: 3,
                           ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(height: height),
-                Container(
-                  height: height * 12.5,
-                  padding:
-                  EdgeInsets.fromLTRB(height * 2, height * 2, height * 2, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 3,
-                        child: Neumorphic(
-                          boxShape: NeumorphicBoxShape.roundRect(
-                              borderRadius: BorderRadius.circular(12)),
-                          style: neumorphicStyleProject,
-                          child: TextField(
-                            controller: textController,
-                            inputFormatters: [LengthLimitingTextInputFormatter(
-                                3)
-                            ],
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.all(height * 2),
-                              hintText: '......',
-                              border: InputBorder.none,
-                            ),
-                            style: TextStyle(
-                                fontSize: height * 6,
-                                color: Colors.grey[700],
-                                fontWeight: FontWeight.w300,
-                                letterSpacing: 2),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: width * 4),
-                      Expanded(
-                        flex: 8,
-                        child: Neumorphic(
-                          boxShape: NeumorphicBoxShape.roundRect(
-                              borderRadius: BorderRadius.circular(12)),
-                          padding: EdgeInsets.all(height),
-                          style: neumorphicStyleProject,
-                          child: Container(
-                            child: Center(
-                              child: Text(
-                                song.name,
-                                style: TextStyle(
-                                    fontSize: height * 2.85,
-                                    color: Colors.grey[700],
-                                    fontWeight: FontWeight.w300,
-                                    fontFamily: 'Catamaran',
-                                    letterSpacing: 1.5),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
-                ),
-                SizedBox(height: height),
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(
-                        height * 2, height * 2, height * 2, height),
-                    child: Neumorphic(
-                      boxShape: NeumorphicBoxShape.roundRect(
-                          borderRadius: BorderRadius.circular(12)),
-                      padding: EdgeInsets.all(height * 2),
-                      style: neumorphicStyleDepth,
+                ],
+              ),
+            ),
+
+            SizedBox(height: height * 3),
+
+            // Scale Rhythm Degree Misc
+            Expanded(
+              child: Container(
+                child: Neumorphic(
+                  boxShape: NeumorphicBoxShape.roundRect(
+                      borderRadius: BorderRadius.circular(12)),
+                  padding: EdgeInsets.fromLTRB(
+                      height * 3.5, height / 2, height * 3.5, 0),
+                  margin: EdgeInsets.all(height),
+                  style: neumorphicStyleDepth,
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(
+                          0, (height * 2) + height / 2, 0, height * 3),
                       child: Column(
                         children: <Widget>[
+                          // Scale and Rhythm
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
+                              // Scale
                               Expanded(
                                 child: Column(
                                   children: <Widget>[
                                     Text(
                                       'Scale',
                                       style: TextStyle(
-                                          fontSize: height * 2.1,
-                                          color: Colors.grey[600],
+                                          fontSize: height * 1.8,
+                                          color: Hexcolor('#082AF2'),
                                           fontWeight: FontWeight.w300,
                                           letterSpacing: 1.5),
                                     ),
-                                    Text(
-                                      song.scale + song.mode,
+                                    SizedBox(
+                                      height: height,
+                                    ),
+                                    AutoSizeText(
+                                      "G# maj",
                                       style: TextStyle(
                                           fontSize: height * 6,
                                           color: Colors.grey[800],
                                           fontWeight: FontWeight.w300,
                                           letterSpacing: 1.5),
+                                      maxLines: 1,
+                                      group: scaleRhythmGroup,
                                     )
                                   ],
                                 ),
                               ),
+
+                              // Transpose Button
+                              NeumorphicButton(
+                                  margin: EdgeInsets.fromLTRB(height * 3.5,
+                                      height * 2, height * 3.5, height * 2),
+                                  padding: EdgeInsets.all(height * 2),
+                                  boxShape: NeumorphicBoxShape.roundRect(
+                                      borderRadius: BorderRadius.circular(100)),
+                                  style: neumorphicStyleProjectBlue,
+                                  onClick: () async {
+                                    dynamic result = await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          TransposeDialog(),
+                                    );
+                                  },
+                                  child: Text('Trans')),
+
+                              // Rhythm
                               Expanded(
                                 child: Column(
                                   children: <Widget>[
                                     Text(
                                       'Rhythm',
                                       style: TextStyle(
-                                          fontSize: height * 2.1,
-                                          color: Colors.grey[600],
+                                          fontSize: height * 1.8,
+                                          color: Hexcolor('#082AF2'),
                                           fontWeight: FontWeight.w300,
                                           letterSpacing: 1.5),
                                     ),
-                                    Text(
-                                      song.rhythm,
+                                    SizedBox(
+                                      height: height,
+                                    ),
+                                    AutoSizeText(
+                                      "4/4",
                                       style: TextStyle(
                                           fontSize: height * 6,
                                           color: Colors.grey[800],
                                           fontWeight: FontWeight.w300,
                                           letterSpacing: 1.5),
+                                      maxLines: 1,
+                                      group: scaleRhythmGroup,
                                     )
                                   ],
                                 ),
                               ),
                             ],
                           ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Neumorphic(
+
+                          SizedBox(
+                            height: height,
+                          ),
+
+                          // Scale Degree
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, height, 0, 0),
+                            height: height * 41,
+                            child: GridView.count(
+                              childAspectRatio: width / 3.2,
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 8,
+                              crossAxisSpacing: 2,
+                              primary: false,
+                              children: <Widget>[
+                                Neumorphic(
                                   margin: EdgeInsets.fromLTRB(
                                       height * 2, height * 2, height * 2, 0),
                                   boxShape: NeumorphicBoxShape.roundRect(
                                       borderRadius: BorderRadius.circular(12)),
-                                  padding: EdgeInsets.all(height * 1.75),
+                                  padding: EdgeInsets.all(height * 1.2),
                                   style: neumorphicStyleProject,
                                   child: Column(
                                     children: <Widget>[
@@ -237,29 +270,33 @@ class _HomeState extends State<Home> {
                                         'i',
                                         style: TextStyle(
                                             fontSize: height * 1.75,
-                                            color: Colors.grey[600],
+                                            color: Hexcolor('#082AF2'),
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
                                       ),
-                                      Text(
-                                        scale.i,
+                                      SizedBox(
+                                        height: width,
+                                      ),
+                                      AutoSizeText(
+                                        "G",
                                         style: TextStyle(
-                                            fontSize: height * 4,
+                                            fontSize: height * 3.5,
                                             color: Colors.grey[800],
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
+                                        group: scaleDegGroup,
+                                        maxLines: 1,
                                       )
                                     ],
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Neumorphic(
+                                // Deg ii
+                                Neumorphic(
                                   margin: EdgeInsets.fromLTRB(
                                       height * 2, height * 2, height * 2, 0),
                                   boxShape: NeumorphicBoxShape.roundRect(
                                       borderRadius: BorderRadius.circular(12)),
-                                  padding: EdgeInsets.all(height * 1.75),
+                                  padding: EdgeInsets.all(height * 1.2),
                                   style: neumorphicStyleProject,
                                   child: Column(
                                     children: <Widget>[
@@ -267,29 +304,33 @@ class _HomeState extends State<Home> {
                                         'ii',
                                         style: TextStyle(
                                             fontSize: height * 1.75,
-                                            color: Colors.grey[600],
+                                            color: Hexcolor('#082AF2'),
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
                                       ),
-                                      Text(
-                                        scale.ii,
+                                      SizedBox(
+                                        height: width,
+                                      ),
+                                      AutoSizeText(
+                                        "Am",
                                         style: TextStyle(
-                                            fontSize: height * 4,
+                                            fontSize: height * 3.5,
                                             color: Colors.grey[800],
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
+                                        group: scaleDegGroup,
+                                        maxLines: 1,
                                       )
                                     ],
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Neumorphic(
+                                // Deg iii
+                                Neumorphic(
                                   margin: EdgeInsets.fromLTRB(
                                       height * 2, height * 2, height * 2, 0),
                                   boxShape: NeumorphicBoxShape.roundRect(
                                       borderRadius: BorderRadius.circular(12)),
-                                  padding: EdgeInsets.all(height * 1.75),
+                                  padding: EdgeInsets.all(height * 1.2),
                                   style: neumorphicStyleProject,
                                   child: Column(
                                     children: <Widget>[
@@ -297,33 +338,33 @@ class _HomeState extends State<Home> {
                                         'iii',
                                         style: TextStyle(
                                             fontSize: height * 1.75,
-                                            color: Colors.grey[600],
+                                            color: Hexcolor('#082AF2'),
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
                                       ),
-                                      Text(
-                                        scale.iii,
+                                      SizedBox(
+                                        height: width,
+                                      ),
+                                      AutoSizeText(
+                                        "Bm",
                                         style: TextStyle(
-                                            fontSize: height * 4,
+                                            fontSize: height * 3.5,
                                             color: Colors.grey[800],
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
+                                        group: scaleDegGroup,
+                                        maxLines: 1,
                                       )
                                     ],
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Neumorphic(
+                                // Deg iv
+                                Neumorphic(
                                   margin: EdgeInsets.fromLTRB(
                                       height * 2, height * 2, height * 2, 0),
                                   boxShape: NeumorphicBoxShape.roundRect(
                                       borderRadius: BorderRadius.circular(12)),
-                                  padding: EdgeInsets.all(height * 1.75),
+                                  padding: EdgeInsets.all(height * 1.2),
                                   style: neumorphicStyleProject,
                                   child: Column(
                                     children: <Widget>[
@@ -331,29 +372,33 @@ class _HomeState extends State<Home> {
                                         'iv',
                                         style: TextStyle(
                                             fontSize: height * 1.75,
-                                            color: Colors.grey[600],
+                                            color: Hexcolor('#082AF2'),
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
                                       ),
-                                      Text(
-                                        scale.iv,
+                                      SizedBox(
+                                        height: width,
+                                      ),
+                                      AutoSizeText(
+                                        "C",
                                         style: TextStyle(
-                                            fontSize: height * 4,
+                                            fontSize: height * 3.5,
                                             color: Colors.grey[800],
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
+                                        group: scaleDegGroup,
+                                        maxLines: 1,
                                       )
                                     ],
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Neumorphic(
+                                // Deg v
+                                Neumorphic(
                                   margin: EdgeInsets.fromLTRB(
                                       height * 2, height * 2, height * 2, 0),
                                   boxShape: NeumorphicBoxShape.roundRect(
                                       borderRadius: BorderRadius.circular(12)),
-                                  padding: EdgeInsets.all(height * 1.75),
+                                  padding: EdgeInsets.all(height * 1.2),
                                   style: neumorphicStyleProject,
                                   child: Column(
                                     children: <Widget>[
@@ -361,29 +406,33 @@ class _HomeState extends State<Home> {
                                         'v',
                                         style: TextStyle(
                                             fontSize: height * 1.75,
-                                            color: Colors.grey[600],
+                                            color: Hexcolor('#082AF2'),
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
                                       ),
-                                      Text(
-                                        scale.v,
+                                      SizedBox(
+                                        height: width,
+                                      ),
+                                      AutoSizeText(
+                                        "D",
                                         style: TextStyle(
-                                            fontSize: height * 4,
+                                            fontSize: height * 3.5,
                                             color: Colors.grey[800],
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
+                                        group: scaleDegGroup,
+                                        maxLines: 1,
                                       )
                                     ],
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Neumorphic(
+                                // Deg vi
+                                Neumorphic(
                                   margin: EdgeInsets.fromLTRB(
                                       height * 2, height * 2, height * 2, 0),
                                   boxShape: NeumorphicBoxShape.roundRect(
                                       borderRadius: BorderRadius.circular(12)),
-                                  padding: EdgeInsets.all(height * 1.75),
+                                  padding: EdgeInsets.all(height * 1.2),
                                   style: neumorphicStyleProject,
                                   child: Column(
                                     children: <Widget>[
@@ -391,61 +440,69 @@ class _HomeState extends State<Home> {
                                         'vi',
                                         style: TextStyle(
                                             fontSize: height * 1.75,
-                                            color: Colors.grey[600],
+                                            color: Hexcolor('#082AF2'),
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
                                       ),
-                                      Text(
-                                        scale.vi,
+                                      SizedBox(
+                                        height: width,
+                                      ),
+                                      AutoSizeText(
+                                        "Em",
                                         style: TextStyle(
-                                            fontSize: height * 4,
+                                            fontSize: height * 3.5,
                                             color: Colors.grey[800],
                                             fontWeight: FontWeight.w300,
                                             letterSpacing: 1.5),
+                                        group: scaleDegGroup,
+                                        maxLines: 1,
                                       )
                                     ],
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Neumorphic(
-                                margin: EdgeInsets.fromLTRB(
-                                    height * 2, height * 2, height * 2, 0),
-                                boxShape: NeumorphicBoxShape.roundRect(
-                                    borderRadius: BorderRadius.circular(12)),
-                                padding: EdgeInsets.all(height * 1.75),
-                                style: neumorphicStyleProject,
-                                child: Container(
-                                  width: 77,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Text(
-                                        'vii',
-                                        style: TextStyle(
-                                            fontSize: height * 1.75,
-                                            color: Colors.grey[600],
-                                            fontWeight: FontWeight.w300,
-                                            letterSpacing: 1.5),
-                                      ),
-                                      Text(
-                                        scale.vii,
-                                        style: TextStyle(
-                                            fontSize: height * 4,
-                                            color: Colors.grey[800],
-                                            fontWeight: FontWeight.w300,
-                                            letterSpacing: 1.5),
-                                      ),
-                                    ],
+                                // Deg vii
+                                Neumorphic(
+                                  margin: EdgeInsets.fromLTRB(
+                                      height * 2, height * 2, height * 2, 0),
+                                  boxShape: NeumorphicBoxShape.roundRect(
+                                      borderRadius: BorderRadius.circular(12)),
+                                  padding: EdgeInsets.all(height * 1.2),
+                                  style: neumorphicStyleProject,
+                                  child: Container(
+                                    child: Column(
+                                      children: <Widget>[
+                                        Text(
+                                          'vii',
+                                          style: TextStyle(
+                                              fontSize: height * 1.75,
+                                              color: Hexcolor('#082AF2'),
+                                              fontWeight: FontWeight.w300,
+                                              letterSpacing: 1.5),
+                                        ),
+                                        SizedBox(
+                                          height: width,
+                                        ),
+                                        AutoSizeText(
+                                          "Bd",
+                                          style: TextStyle(
+                                              fontSize: height * 3.5,
+                                              color: Colors.grey[800],
+                                              fontWeight: FontWeight.w300,
+                                              letterSpacing: 1.5),
+                                          group: scaleDegGroup,
+                                          maxLines: 1,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+
+                          // Misc. Chords
                           Container(
-                            width: width * 90,
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, height),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -454,8 +511,9 @@ class _HomeState extends State<Home> {
                                     margin: EdgeInsets.fromLTRB(
                                         height * 2, height * 2, height * 2, 0),
                                     boxShape: NeumorphicBoxShape.roundRect(
-                                        borderRadius: BorderRadius.circular(12)),
-                                    padding: EdgeInsets.all(height * 1.75),
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    padding: EdgeInsets.all(height * 1.2),
                                     style: neumorphicStyleProject,
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment.end,
@@ -464,12 +522,15 @@ class _HomeState extends State<Home> {
                                           'Misc. Chords',
                                           style: TextStyle(
                                               fontSize: height * 2,
-                                              color: Colors.grey[600],
+                                              color: Hexcolor('#082AF2'),
                                               fontWeight: FontWeight.w300,
                                               letterSpacing: 1.5),
                                         ),
-                                        Text(
-                                          '''C -> C7\nD -> D7\nShows the chords out of the scale''',
+                                        SizedBox(
+                                          height: height,
+                                        ),
+                                        AutoSizeText(
+                                          '''C -> C7\nD -> D7\nShows the chords out of the s s s s   ''',
                                           style: TextStyle(
                                               fontSize: height * 2.5,
                                               color: Colors.grey[800],
@@ -488,9 +549,24 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ));
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
   }
 }
+

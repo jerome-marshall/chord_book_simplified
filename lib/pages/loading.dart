@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:chordbooksimplified/model/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Loading extends StatefulWidget {
@@ -35,7 +34,7 @@ class _LoadingState extends State<Loading> {
   }
 
   void getData() async {
-    String jsonSoz = await Future.delayed(Duration(seconds: 3), () {
+    String jsonSoz = await Future.delayed(Duration(seconds: 1), () {
       return rootBundle.loadString('json/soz.json');
     });
 
@@ -43,6 +42,7 @@ class _LoadingState extends State<Loading> {
     print(sozSongBook["1"]);
     Data data = new Data();
     data.setSozSongBook(sozSongBook);
+    data.songBookName = "Songs of Zion";
     Navigator.pushReplacementNamed(context, '/home', arguments: {'data': data});
   }
 }
