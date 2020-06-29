@@ -9,6 +9,8 @@ class Data {
   static String sharp = String.fromCharCode(9839);
   static String flat = String.fromCharCode(9837);
 
+  String _songBookName = "Songs of Zion";
+
   Map _sozSongBook;
 
   Map _minorScale = {
@@ -145,6 +147,12 @@ class Data {
 
   Data();
 
+  String get songBookName => _songBookName;
+
+  set songBookName(String value) {
+    _songBookName = value;
+  }
+
   void setSozSongBook(Map soz) {
     this._sozSongBook = soz;
   }
@@ -176,5 +184,7 @@ class Data {
     await loadSoz();
     return this._sozSongBook;
   }
+
+
 }
 

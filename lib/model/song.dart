@@ -6,16 +6,24 @@ class Song {
   String mode;
   String rhythm;
   String misc;
+  int transpose;
 
   Song(
-      {this.book, this.number, this.name, this.scale, this.rhythm, this.misc, this.mode});
+      {this.book,
+      this.number,
+      this.name,
+      this.scale,
+      this.rhythm,
+      this.misc,
+      this.mode});
 
-  Song.fromMap(Map<String, dynamic> data){
+  Song.fromMap(Map<String, dynamic> data) {
     number = data["number"].toString();
     name = data["name"];
     scale = data["scale"];
     mode = data["mode"];
     rhythm = data["rhythm"];
     misc = data["misc"];
+    transpose = 0;
   }
 }
