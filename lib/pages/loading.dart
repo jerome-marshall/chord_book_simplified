@@ -2,6 +2,8 @@ import 'dart:async' show Future;
 import 'dart:convert';
 
 import 'package:chordbooksimplified/model/data.dart';
+import 'package:chordbooksimplified/model/jsonData.dart';
+import 'package:chordbooksimplified/model/song.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -12,7 +14,6 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -34,15 +35,18 @@ class _LoadingState extends State<Loading> {
   }
 
   void getData() async {
-    String jsonSoz = await Future.delayed(Duration(seconds: 1), () {
-      return rootBundle.loadString('json/soz.json');
-    });
+    Song song = new Song();
+    Map songBook = await JsonData().getInitSongBook();
+//    song.number = songBook['1']['number'];
+//    song.name = songBook['1']['name'];
+//    song.book = songBook['book'];
+//    song.scale = songBook['1']['scale'];
+//    song.mode = songBook['1']['mode'];
+//    song.rhythm = songBook['1']['rhythm'];
+//    song.misc = songBook['1']['misc'];
+//    song.transpose = 0;
 
-    Map sozSongBook = jsonDecode(jsonSoz);
-    print(sozSongBook["1"]);
-    Data data = new Data();
-    data.setSozSongBook(sozSongBook);
-    data.songBookName = "Songs of Zion";
-    Navigator.pushReplacementNamed(context, '/home', arguments: {'data': data});
+    Navigator.pushReplacementNamed(
+        context, '/home', arguments: {'songBook': songBook});
   }
 }
