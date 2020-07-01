@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:chordbooksimplified/model/data.dart';
+import 'package:chordbooksimplified/model/jsonData.dart';
 import 'package:chordbooksimplified/model/scale.dart';
 import 'package:chordbooksimplified/model/song.dart';
 import 'package:chordbooksimplified/model/song_book.dart';
@@ -17,6 +18,7 @@ class ChooseBook extends StatefulWidget {
 
 class _ChooseBookState extends State<ChooseBook> {
   String _json;
+  Map _songBook;
 
   List<SongBook> books = [
     SongBook(name: "Songs of Zion", icon: "assets/song_book.png"),
@@ -47,32 +49,25 @@ class _ChooseBookState extends State<ChooseBook> {
             child: NeumorphicButton(
               margin:
                   EdgeInsets.fromLTRB(height * 2, height * 2, height * 2, 0),
-              boxShape: NeumorphicBoxShape.roundRect(
-                  borderRadius: BorderRadius.circular(12)),
+              boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
               padding: EdgeInsets.all(height * 1.75),
               style: neumorphicStyleProject,
               onClick: () async {
-                Data data = new Data();
-
                 switch (index) {
                   case 0:
                     {
-                      _json = await rootBundle.loadString('json/soz.json');
-                      data.songBookName = "Songs of Zion";
+                      _songBook = await JsonData().getSongBook('Songs of Zion');
                     }
                     break;
 
                   case 1:
                     {
-                      _json = await rootBundle.loadString('json/tt.json');
-                      data.songBookName = "Thirumarai Thirupadalgal";
+                      _songBook = await JsonData()
+                          .getSongBook('Thirumarai Thirupadalgal');
                     }
                     break;
                 }
-                Map songBook = jsonDecode(_json);
-                print(songBook["1"]);
-                data.setSozSongBook(songBook);
-                Navigator.pop(context, {'data': data});
+                Navigator.pop(context, {'songBook': _songBook});
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -99,6 +94,20 @@ class _ChooseBookState extends State<ChooseBook> {
           );
         },
       ),
-    ));
+        ));
   }
+
+  Map get songBook => _songBook;
+
+  set songBook(Map value) {
+    _songBook = value;
+  }
+
+  String get json => _json;
+
+  set json(String value) {
+    _json = value;
+  }
+
+
 }
